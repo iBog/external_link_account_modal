@@ -28,11 +28,38 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: const Center(
-        child: ExternalLinkAccountText(
-          url: 'https://example.com',
-          developerName: 'Example Developer',
-          locale: 'en',
+      body: Center(
+        child: Column(
+          children: [
+            ExternalLinkAccountText(
+              url: 'https://example.com',
+              developerName: 'Example Developer',
+              locale: 'en',
+              onCanMakePaymentsFailed: () {
+                debugPrint('onCanMakePaymentsFailed');
+              },
+            ),
+            InkWell(
+              child: const Text(
+                'Custom Link',
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  decorationColor: Colors.blueAccent,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              onTap: () {
+                showExternalLinkModal(
+                  context,
+                  'Example Developer',
+                  'https://example.com',
+                  onCanMakePaymentsFailed: () {
+                    debugPrint('onCanMakePaymentsFailed');
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
