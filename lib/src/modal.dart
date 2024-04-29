@@ -12,7 +12,8 @@ import 'theme.dart';
 
 /// Show the External Link Modal, either using the native API for iOS >16.0,
 /// or a custom Flutter widget following the design requirements.
-showExternalLinkModal(BuildContext context, String developerName, String url,
+Future<void> showExternalLinkModal(
+    BuildContext context, String developerName, String url,
     {String locale = '', void Function()? onCanMakePaymentsFailed}) async {
   bool canMakePayment = await ExternalLinkAccountModal.canMakePayments;
   if (!canMakePayment) {
@@ -23,135 +24,140 @@ showExternalLinkModal(BuildContext context, String developerName, String url,
   if (openNativeModal) return;
   locale = await _getLocale(deviceLocale: locale);
   currentDevice = await _setDevice();
-  showCupertinoModalPopup<void>(
-    context: context,
-    builder: (BuildContext context) => Padding(
-      padding: EdgeInsets.only(
-          top: currentDevice.modalMarginTop,
-          bottom: currentDevice.modalMarginBottom),
-      child: Container(
-        constraints: BoxConstraints(maxWidth: currentDevice.maxWidth),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          child: Scaffold(
-            backgroundColor:
-                MediaQuery.of(context).platformBrightness == Brightness.light
-                    ? systemBackground
-                    : systemBackgroundDark,
-            body: Padding(
-              padding: EdgeInsets.only(
-                  top: currentDevice.topMargin,
-                  bottom: currentDevice.bottomMargin,
-                  right: currentDevice.sideMargin,
-                  left: currentDevice.sideMargin),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        Text(
-                          _getString(
-                                  'AppStore.FullSheet.ExternalPurchases.Title',
-                                  locale) ??
-                              defaultTitle,
-                          textAlign: TextAlign.center,
-                          style: MediaQuery.of(context).platformBrightness ==
-                                  Brightness.light
-                              ? titleStyle
-                              : titleStyleDark,
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(top: currentDevice.titleMargin),
-                          child: Text(
-                            (_getString('AppStore.FullSheet.ExternalPurchases.Body',
-                                        locale) ??
-                                    defaultBody)
-                                .replaceAll('@@developerName@@', developerName),
+  if (context.mounted) {
+    return showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Padding(
+        padding: EdgeInsets.only(
+            top: currentDevice.modalMarginTop,
+            bottom: currentDevice.modalMarginBottom),
+        child: Container(
+          constraints: BoxConstraints(maxWidth: currentDevice.maxWidth),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            child: Scaffold(
+              backgroundColor:
+                  MediaQuery.of(context).platformBrightness == Brightness.light
+                      ? systemBackground
+                      : systemBackgroundDark,
+              body: Padding(
+                padding: EdgeInsets.only(
+                    top: currentDevice.topMargin,
+                    bottom: currentDevice.bottomMargin,
+                    right: currentDevice.sideMargin,
+                    left: currentDevice.sideMargin),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          Text(
+                            _getString(
+                                    'AppStore.FullSheet.ExternalPurchases.Title',
+                                    locale) ??
+                                defaultTitle,
                             textAlign: TextAlign.center,
                             style: MediaQuery.of(context).platformBrightness ==
                                     Brightness.light
-                                ? bodyStyle
-                                : bodyStyleDark,
+                                ? titleStyle
+                                : titleStyleDark,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0, bottom: 24),
-                          child: ClickableLink(
-                            text: _getString(
-                                    'AppStore.FullSheet.ExternalPurchases.LearnMore',
-                                    locale) ??
-                                defaultLearnMore,
-                            onTap: () => launchUrl(
-                                Uri.parse(
-                                    'https://apps.apple.com/story/id1614232807'),
-                                mode: LaunchMode.externalApplication),
-                            textAlign: TextAlign.center,
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: currentDevice.titleMargin),
+                            child: Text(
+                              (_getString('AppStore.FullSheet.ExternalPurchases.Body',
+                                          locale) ??
+                                      defaultBody)
+                                  .replaceAll(
+                                      '@@developerName@@', developerName),
+                              textAlign: TextAlign.center,
+                              style:
+                                  MediaQuery.of(context).platformBrightness ==
+                                          Brightness.light
+                                      ? bodyStyle
+                                      : bodyStyleDark,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    color: MediaQuery.of(context).platformBrightness ==
-                            Brightness.light
-                        ? systemBackground
-                        : systemBackgroundDark,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          right: currentDevice.buttonMargin,
-                          left: currentDevice.buttonMargin,
-                          top: 24),
-                      child: Column(
-                        children: [
-                          CustomCupertinoActionSheetAction(
-                              onPressed: () {
-                                launchUrl(Uri.parse(url),
-                                    mode: LaunchMode.externalApplication);
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                _getString(
-                                        'AppStore.FullSheet.ExternalPurchases.Action1',
-                                        locale) ??
-                                    defaultAction1,
-                                style:
-                                    MediaQuery.of(context).platformBrightness ==
-                                            Brightness.light
-                                        ? buttonStyle
-                                        : buttonStyleDark,
-                              )),
-                          const SizedBox(
-                            height: 12,
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 16.0, bottom: 24),
+                            child: ClickableLink(
+                              text: _getString(
+                                      'AppStore.FullSheet.ExternalPurchases.LearnMore',
+                                      locale) ??
+                                  defaultLearnMore,
+                              onTap: () => launchUrl(
+                                  Uri.parse(
+                                      'https://apps.apple.com/story/id1614232807'),
+                                  mode: LaunchMode.externalApplication),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                          CustomCupertinoActionSheetAction(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                _getString(
-                                        'AppStore.FullSheet.ExternalPurchases.Action2',
-                                        locale) ??
-                                    defaultAction2,
-                                style:
-                                    MediaQuery.of(context).platformBrightness ==
-                                            Brightness.light
-                                        ? buttonStyle
-                                        : buttonStyleDark,
-                              )),
                         ],
                       ),
                     ),
-                  )
-                ],
+                    Container(
+                      color: MediaQuery.of(context).platformBrightness ==
+                              Brightness.light
+                          ? systemBackground
+                          : systemBackgroundDark,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            right: currentDevice.buttonMargin,
+                            left: currentDevice.buttonMargin,
+                            top: 24),
+                        child: Column(
+                          children: [
+                            CustomCupertinoActionSheetAction(
+                                onPressed: () {
+                                  launchUrl(Uri.parse(url),
+                                      mode: LaunchMode.externalApplication);
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  _getString(
+                                          'AppStore.FullSheet.ExternalPurchases.Action1',
+                                          locale) ??
+                                      defaultAction1,
+                                  style: MediaQuery.of(context)
+                                              .platformBrightness ==
+                                          Brightness.light
+                                      ? buttonStyle
+                                      : buttonStyleDark,
+                                )),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            CustomCupertinoActionSheetAction(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  _getString(
+                                          'AppStore.FullSheet.ExternalPurchases.Action2',
+                                          locale) ??
+                                      defaultAction2,
+                                  style: MediaQuery.of(context)
+                                              .platformBrightness ==
+                                          Brightness.light
+                                      ? buttonStyle
+                                      : buttonStyleDark,
+                                )),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// The currently detected device

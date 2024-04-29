@@ -1,6 +1,6 @@
 name: external_link_account_modal
 description: An easy-to-use widget that complies with Apple's External Link Account requirements for reader apps
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/ArvidNy/external_link_account_modal
 issue_tracker: https://github.com/ArvidNy/external_link_account_modal/issues
 screenshots:
